@@ -1,3 +1,5 @@
+using EmailTester.WebApp.Services;
+
 namespace EmailTester.WebApp
 {
     public class Program
@@ -8,6 +10,7 @@ namespace EmailTester.WebApp
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<ISmtpEmailSendTester, SmtpEmailSendTester>();
 
             var app = builder.Build();
 

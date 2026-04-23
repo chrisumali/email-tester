@@ -1,0 +1,91 @@
+@model EmailTester.WebApp.Models.SmtpTestViewModel
+@{
+    ViewData["Title"] = "SMTP email test";
+}
+
+<h1 class="mb-3">SMTP email test</h1>
+<p class="text-muted">
+    Enter your SMTP settings. The app connects, authenticates when a username is provided, and sends a short self-addressed test message to <strong>Sender email</strong> so you can confirm delivery.
+</p>
+
+<form asp-action="Index" asp-controller="EmailTest" method="post" class="row g-3">
+    <div class="col-md-8">
+        <label asp-for="Host" class="form-label"></label>
+        <input asp-for="Host" class="form-control" autocomplete="off" />
+        <span asp-validation-for="Host" class="text-danger"></span>
+    </div>
+    <div class="col-md-4">
+        <label asp-for="Port" class="form-label"></label>
+        <input asp-for="Port" class="form-control" inputmode="numeric" />
+        <span asp-validation-for="Port" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Username" class="form-label"></label>
+        <input asp-for="Username" class="form-control" autocomplete="username" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="Password" class="form-label"></label>
+        <input asp-for="Password" class="form-control" autocomplete="current-password" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="SenderEmail" class="form-label"></label>
+        <input asp-for="SenderEmail" class="form-control" autocomplete="email" />
+        <span asp-validation-for="SenderEmail" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SenderName" class="form-label"></label>
+        <input asp-for="SenderName" class="form-control" />
+        <span asp-validation-for="SenderName" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="SecureSocketOption" class="form-label"></label>
+        <select asp-for="SecureSocketOption" class="form-select">
+            @foreach (var choice in SmtpTestViewModel.SecureSocketOptionChoices)
+            {
+                var sel = string.Equals(Model.SecureSocketOption, choice, StringComparison.OrdinalIgnoreCase);
+                if (sel)
+                {
+                    <option value="@choice" selected>@choice@(choice == "StartTls" ? " (default)" : "")</option>
+                }
+                else
+                {
+                    <option value="@choice">@choice@(choice == "StartTls" ? " (default)" : "")</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="SecureSocketOption" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Run SMTP test</button>
+    </div>
+</form>
+
+@if (Model.Log is { Count: > 0 })
+{
+    <section class="mt-4" aria-label="Test result log">
+        <h2 class="h5">Result log</h2>
+        <ul class="list-unstyled border rounded p-3 bg-light smtp-test-log">
+            @foreach (var line in Model.Log)
+            {
+                var cls = line.Severity switch
+                {
+                    SmtpTestLogSeverity.Success => "smtp-log-success",
+                    SmtpTestLogSeverity.Warning => "smtp-log-warning",
+                    SmtpTestLogSeverity.Error => "smtp-log-error",
+                    _ => "smtp-log-info"
+                };
+                <li class="@cls mb-1">@line.Message</li>
+            }
+        </ul>
+    </section>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

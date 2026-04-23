@@ -20,3 +20,19 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.smtp-test-log .smtp-log-success {
+  color: #198754;
+}
+
+.smtp-test-log .smtp-log-warning {
+  color: #cc9a06;
+}
+
+.smtp-test-log .smtp-log-error {
+  color: #dc3545;
+}
+
+.smtp-test-log .smtp-log-info {
+  color: #0d6efd;
+}
